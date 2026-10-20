@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Shelf: a full-stack reading tracker. Responsive frontend, REST API and SQLite database.">
+  <title>Shelf · Reading tracker</title>
+
+  <!-- 2 font families, 3 weights total (Montserrat 600/700, Open Sans 400) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
+
+  <!-- Leave empty when the API is on the same server. To run this page from
+       another origin, put the API address here, e.g. http://localhost:3000 -->
+  <meta name="api-base" content="">
+
+  <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="#main" aria-label="Shelf, home">
+        <span class="brand__mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        Shelf
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+        Menu
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="Main">
+        <ul class="site-nav__list">
+          <li><a href="#add">Add a book</a></li>
+          <li><a href="#library">My books</a></li>
+          <li><a href="#shelf">My shelf</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div id="server-banner" class="server-banner" role="alert" hidden>
+    <p id="server-banner-text"></p>
+    <button id="retry-button" class="button button--quiet" type="button">Try again</button>
+  </div>
+
+  <main id="main" class="layout" tabindex="-1">
+    <section class="intro" aria-labelledby="intro-title">
+      <h1 id="intro-title">Keep track of what you read.</h1>
+      <p>Add the books you want to read, mark the ones you've started, and watch your shelf fill up as you finish them.</p>
+    </section>
+
+    <div class="content">
+      <section id="add" class="panel add" aria-labelledby="add-title">
+        <h2 id="add-title">Add a book</h2>
+        <form id="book-form" class="book-form" novalidate>
+          <div class="field">
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" autocomplete="off" required aria-describedby="title-error">
+            <p id="title-error" class="field__error" hidden>Enter a title to add the book.</p>
+          </div>
+          <div class="field">
+            <label for="author">Author <span class="field__hint">(optional)</span></label>
+            <input id="author" name="author" type="text" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="to-read">To read</option>
+              <option value="reading">Reading</option>
+              <option value="finished">Finished</option>
+            </select>
+          </div>
+          <div id="form-message" class="form-message" role="alert" hidden></div>
+          <button class="button button--primary" type="submit">Add book</button>
+        </form>
+      </section>
+
+      <section id="library" class="panel library" aria-labelledby="library-title" aria-busy="true">
+        <div class="library__head">
+          <h2 id="library-title">My books</h2>
+          <div class="filters" role="group" aria-label="Show books">
+            <button type="button" class="filter" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="filter" data-filter="to-read" aria-pressed="false">To read</button>
+            <button type="button" class="filter" data-filter="reading" aria-pressed="false">Reading</button>
+            <button type="button" class="filter" data-filter="finished" aria-pressed="false">Finished</button>
+          </div>
+        </div>
+
+        <ul id="book-list" class="book-list"></ul>
+        <p id="empty-state" class="empty">Loading your books…</p>
+      </section>
+    </div>
+
+    <aside id="shelf" class="panel sidebar" aria-labelledby="shelf-title">
+      <h2 id="shelf-title">My shelf</h2>
+      <div id="shelf-visual" class="shelf" role="img" aria-label="Your shelf is empty"></div>
+      <dl class="stats">
+        <div class="stats__item stats__item--to-read"><dt>To read</dt><dd id="count-to-read">0</dd></div>
+        <div class="stats__item stats__item--reading"><dt>Reading</dt><dd id="count-reading">0</dd></div>
+        <div class="stats__item stats__item--finished"><dt>Finished</dt><dd id="count-finished">0</dd></div>
+      </dl>
+
+      <section class="authors" aria-labelledby="authors-title">
+        <h3 id="authors-title">Authors</h3>
+        <ul id="author-list" class="author-list"></ul>
+        <p id="authors-empty" class="authors__empty" hidden>Authors appear here when you add books with an author.</p>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>Shelf stores your books in a SQLite database through its REST API (<a href="/api/books">/api/books</a>). <span id="sync-status">Connecting…</span></p>
+  </footer>
+
+  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
